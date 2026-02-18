@@ -51,7 +51,7 @@ export default function Navbar() {
       <div className="navbar-container">
         <Link href="/" className="navbar-logo">
           <Image src="/icon.webp" width={40} height={40} alt="Logo" />
-          <span className="navbar-logo-text">LLA Saladillo</span>
+          <span className="navbar-logo-text">La Libertad Avanza Saladillo</span>
         </Link>
 
         {/* Desktop Nav */}
