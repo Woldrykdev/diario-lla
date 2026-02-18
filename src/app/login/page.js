@@ -25,28 +25,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="p-10 max-w-md mx-auto">
-      <h1 className="text-2xl mb-6">Login</h1>
+    <div className="login-container">
+      <div className="login-card">
+        <h1 className="login-title">Iniciar sesión</h1>
 
-      <form onSubmit={handleLogin} className="flex flex-col gap-4">
-        <input
-          type="email"
-          placeholder="Email"
-          className="border p-2"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <form onSubmit={handleLogin} className="login-form">
+          <input
+            type="email"
+            placeholder="Email"
+            className="login-input"
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="border p-2"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            className="login-input"
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-        <button className="bg-black text-white p-2">
-          Iniciar sesión
-        </button>
-      </form>
+          <button type="submit" className="login-button">
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

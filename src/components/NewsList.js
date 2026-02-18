@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -36,36 +36,36 @@ export default function NewsList({ news }) {
 
   return (
     <>
-      <h1 style={styles.heading}>Últimas Noticias</h1>
-      <p style={{ marginBottom: "16px", color: "#555", fontSize: "14px" }}>
+      <h1 className="news-heading">Últimas Noticias</h1>
+      <p className="news-filter-text">
         Mostrando: <strong>{categoriaLabel}</strong>
       </p>
 
       {featured && (
-        <section style={styles.featuredSection}>
-          <div style={styles.featuredImageWrapper}>
+        <section className="featured-section">
+          <div className="featured-image-wrapper">
             {featured.image_url && (
               <Image
                 src={featured.image_url}
                 alt={featured.title}
                 width={900}
                 height={500}
-                style={styles.featuredImage}
+                className="featured-image"
               />
             )}
           </div>
 
-          <div style={styles.featuredContent}>
+          <div className="featured-content">
             {formattedFeaturedDate && (
-              <p style={styles.featuredDate}>{formattedFeaturedDate}</p>
+              <p className="featured-date">{formattedFeaturedDate}</p>
             )}
-            <h2 style={styles.featuredTitle}>{featured.title}</h2>
-            <p style={styles.featuredExcerpt}>
+            <h2 className="featured-title">{featured.title}</h2>
+            <p className="featured-excerpt">
               {featured.content?.substring(0, 260)}...
             </p>
             <Link
               href={`/noticia?slug=${encodeURIComponent(featured.slug)}`}
-              style={styles.featuredButton}
+              className="featured-button"
             >
               Leer noticia
             </Link>
@@ -73,7 +73,7 @@ export default function NewsList({ news }) {
         </section>
       )}
 
-      <div style={styles.grid}>
+      <div className="news-grid">
         {others?.map((item) => (
           <NewsCard key={item.id} news={item} />
         ))}
@@ -81,66 +81,4 @@ export default function NewsList({ news }) {
     </>
   );
 }
-
-const styles = {
-  heading: {
-    fontSize: "32px",
-    fontWeight: "800",
-    marginBottom: "10px",
-  },
-  featuredSection: {
-    display: "grid",
-    gridTemplateColumns: "minmax(0, 2fr) minmax(0, 3fr)",
-    gap: "24px",
-    alignItems: "stretch",
-    marginBottom: "30px",
-  },
-  featuredImageWrapper: {
-    borderRadius: "10px",
-    overflow: "hidden",
-  },
-  featuredImage: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-  },
-  featuredContent: {
-    backgroundColor: "white",
-    borderRadius: "10px",
-    padding: "24px",
-    boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    justifyContent: "center",
-    wordWrap: "break-word",
-  },
-  featuredDate: {
-    fontSize: "13px",
-    color: "#777",
-  },
-  featuredTitle: {
-    fontSize: "26px",
-    fontWeight: "800",
-  },
-  featuredExcerpt: {
-    fontSize: "15px",
-    color: "#444",
-  },
-  featuredButton: {
-    alignSelf: "flex-start",
-    marginTop: "8px",
-    backgroundColor: "#0F2A79",
-    color: "white",
-    padding: "10px 18px",
-    borderRadius: "4px",
-    fontSize: "14px",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-    gap: "25px",
-  },
-};
-
 

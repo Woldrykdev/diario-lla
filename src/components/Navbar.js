@@ -9,8 +9,6 @@ const categories = [
   { value: "", label: "Todas las noticias" },
   { value: "politica", label: "Política" },
   { value: "economia", label: "Economía" },
-  // { value: "sociedad", label: "Sociedad" },
-  // { value: "deportes", label: "Deportes" },
 ];
 
 export default function Navbar() {
@@ -19,10 +17,13 @@ export default function Navbar() {
   const currentCategoria = searchParams.get("categoria") || "";
 
   const [open, setOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   const handleCategoriaClick = (value) => {
     setOpen(false);
+    setMobileMenuOpen(false);
 
     if (!value) {
       router.push("/");
@@ -31,11 +32,13 @@ export default function Navbar() {
     }
   };
 
-  // Cerrar dropdown si clickea afuera
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setMobileMenuOpen(false);
       }
     }
 
@@ -44,46 +47,30 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header style={styles.header}>
-      <div style={styles.container}>
-        <Link href="/" style={styles.logoContainer}>
-          <Image src="/icon.webp" width={45} height={45} alt="Logo" />
-          <span style={styles.logoText}>
-            La Libertad Avanza Saladillo
-          </span>
+    <header className="navbar-header">
+      <div className="navbar-container">
+        <Link href="/" className="navbar-logo">
+          <Image src="/icon.webp" width={40} height={40} alt="Logo" />
+          <span className="navbar-logo-text">LLA Saladillo</span>
         </Link>
 
-        <nav style={styles.nav}>
-          <Link href="/" style={styles.navLink}>
-            Inicio
-          </Link>
+        {/* Desktop Nav */}
+        <nav className="navbar-desktop">
+          <Link href="/" className="navbar-link">Inicio</Link>
+          <Link href="/sobre-nosotros" className="navbar-link">Sobre nosotros</Link>
 
-          <Link href="/sobre-nosotros" style={styles.navLink}>
-            Sobre nosotros
-          </Link>
-
-          {/* Dropdown Categorías */}
-          <div style={styles.dropdown} ref={dropdownRef}>
-            <button
-              onClick={() => setOpen(!open)}
-              style={styles.dropdownButton}
-            >
+          <div className="navbar-dropdown" ref={dropdownRef}>
+            <button onClick={() => setOpen(!open)} className="navbar-dropdown-btn">
               Categorías ▾
             </button>
 
             {open && (
-              <div style={styles.dropdownMenu}>
+              <div className="navbar-dropdown-menu">
                 {categories.map((cat) => (
                   <button
                     key={cat.value || "all"}
                     onClick={() => handleCategoriaClick(cat.value)}
-                    style={{
-                      ...styles.dropdownItem,
-                      backgroundColor:
-                        currentCategoria === cat.value
-                          ? "rgba(15,42,121,0.1)"
-                          : "white",
-                    }}
+                    className={`navbar-dropdown-item ${currentCategoria === cat.value ? "active" : ""}`}
                   >
                     {cat.label}
                   </button>
@@ -92,80 +79,37 @@ export default function Navbar() {
             )}
           </div>
         </nav>
+
+        {/* Mobile Hamburger */}
+        <button
+          className="navbar-hamburger"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Menú"
+        >
+          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
+          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
+          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <nav className="navbar-mobile" ref={mobileMenuRef}>
+          <Link href="/" className="navbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Inicio</Link>
+          <Link href="/sobre-nosotros" className="navbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Sobre nosotros</Link>
+          <div className="navbar-mobile-divider"></div>
+          <p className="navbar-mobile-title">Categorías</p>
+          {categories.map((cat) => (
+            <button
+              key={cat.value || "all"}
+              onClick={() => handleCategoriaClick(cat.value)}
+              className={`navbar-mobile-link ${currentCategoria === cat.value ? "active" : ""}`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </nav>
+      )}
     </header>
   );
 }
-
-const styles = {
-  header: {
-    backgroundColor: "#0F2A79",
-    padding: "16px 0",
-    color: "white",
-    position: "sticky",
-    top: 0,
-    zIndex: 1000,
-  },
-  container: {
-    maxWidth: "1200px",
-    margin: "0 auto",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "0 20px",
-  },
-  logoContainer: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    fontWeight: "700",
-    fontSize: "18px",
-    color: "white",
-    textDecoration: "none",
-  },
-  logoText: {
-    color: "white",
-  },
-  nav: {
-    display: "flex",
-    alignItems: "center",
-    gap: "30px",
-    fontWeight: "600",
-  },
-  navLink: {
-    color: "white",
-    textDecoration: "none",
-    fontSize: "15px",
-  },
-  dropdown: {
-    position: "relative",
-  },
-  dropdownButton: {
-    background: "none",
-    border: "none",
-    color: "white",
-    fontSize: "15px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-  dropdownMenu: {
-    position: "absolute",
-    top: "35px",
-    right: 0,
-    backgroundColor: "white",
-    borderRadius: "8px",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-    overflow: "hidden",
-    minWidth: "220px",
-  },
-  dropdownItem: {
-    width: "100%",
-    textAlign: "left",
-    padding: "10px 14px",
-    border: "none",
-    background: "white",
-    cursor: "pointer",
-    fontSize: "14px",
-    color: "#111827",
-  },
-};
