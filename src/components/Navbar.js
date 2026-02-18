@@ -11,6 +11,9 @@ const categories = [
   { value: "proyectos", label: "Proyectos del Concejo Deliberante" },
   { value: "visitas ", label: "Visitas institucionales" },
   { value: "juventud", label: "Juventud" },
+  { value: "formacion", label: "Escuela de formacion, debate y análisis" },
+  { value: "purpura", label: "La Purpura" },
+  { value: "geraldine", label: "Geraldine Calvella" },
 ];
 
 export default function Navbar() {

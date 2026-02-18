@@ -28,6 +28,12 @@ export default function NewsList({ news }) {
       ? "Visitas institucionales"
       : categoria === "juventud"
       ? "Juventud"
+      : categoria === "formacion"
+      ? "Escuela de formacion, debate y análisis"
+      : categoria === "purpura"
+      ? "La Purpura"
+      : categoria === "geraldine"
+      ? "Geraldine Calvella"
       : "Todas";
 
   const formattedFeaturedDate =
