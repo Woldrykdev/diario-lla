@@ -1,7 +1,7 @@
 theme: {
     extend: {
         colors: {
-            llaBlue: '#1e3a8a';
+            llaBlue: '#38195c';
             llaYellow: '#facc15';
         };
     };

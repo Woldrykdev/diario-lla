@@ -25,7 +25,7 @@ a {
 
 /* ========== NAVBAR ========== */
 .navbar-header {
-  background-color: #0F2A79;
+  background-color: #38195c;
   padding: 12px 0;
   color: white;
   position: sticky;
@@ -132,7 +132,7 @@ a {
 .navbar-mobile {
   display: flex;
   flex-direction: column;
-  background-color: #0F2A79;
+  background-color: #38195c;
   padding: 16px;
   gap: 4px;
 }

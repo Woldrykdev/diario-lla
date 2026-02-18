@@ -153,7 +153,7 @@ export default function AdminForm() {
             <option value="general">Informacion general</option>
             <option value="proyectos">Proyectos del concejo deliberante</option>
             <option value="visitas">Visitas institucionales</option>
-            <option value="juventud">juventud</option>
+            <option value="juventud">Juventud</option>
           </select>
         </label>
 
