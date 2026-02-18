@@ -154,6 +154,11 @@ export default function AdminForm() {
             <option value="proyectos">Proyectos del concejo deliberante</option>
             <option value="visitas">Visitas institucionales</option>
             <option value="juventud">Juventud</option>
+            <option value="formacion">Escuela de formación, debate y análisis</option>
+            <option value="purpura">La Purpura</option>
+            <option value="geraldine">Geraldine Calvella</option>
+
+
           </select>
         </label>
 
