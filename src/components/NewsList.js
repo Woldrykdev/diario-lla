@@ -20,10 +20,14 @@ export default function NewsList({ news }) {
     : byCategory;
 
   const categoriaLabel =
-    categoria === "politica"
-      ? "Política"
-      : categoria === "economia"
-      ? "Economía"
+    categoria === "general"
+      ? "Informacion General"
+      : categoria === "proyectos"
+      ? "Proyectos del Concejo Deliberante"
+      : categoria === "visitas"
+      ? "Visitas institucionales"
+      : categoria === "juventud"
+      ? "Juventud"
       : "Todas";
 
   const formattedFeaturedDate =
