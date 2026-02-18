@@ -7,8 +7,10 @@ import { useState, useRef, useEffect } from "react";
 
 const categories = [
   { value: "", label: "Todas las noticias" },
-  { value: "politica", label: "Política" },
-  { value: "economia", label: "Economía" },
+  { value: "general", label: "Información general" },
+  { value: "proyectos", label: "Proyectos del Concejo Deliberante" },
+  { value: "visitas ", label: "Visitas institucionales" },
+  { value: "juventud", label: "Juventud" },
 ];
 
 export default function Navbar() {
