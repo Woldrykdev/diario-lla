@@ -2,7 +2,7 @@ export default function Footer() {
     return (
       <footer style={styles.footer}>
         <div style={styles.container}>
-          <p>© {new Date().getFullYear()} Saladillo Avanza</p>
+          <p>© {new Date().getFullYear()} La Libertad Avanza Saladillo</p>
         </div>
       </footer>
     );
