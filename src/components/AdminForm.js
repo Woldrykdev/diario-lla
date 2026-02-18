@@ -150,8 +150,10 @@ export default function AdminForm() {
             style={styles.input}
           >
             <option value="">Seleccionar categoría</option>
-            <option value="politica">Política</option>
-            <option value="economia">Economía</option>
+            <option value="general">Informacion general</option>
+            <option value="proyectos">Proyectos del concejo deliberante</option>
+            <option value="visitas">Visitas institucionales</option>
+            <option value="juventud">juventud</option>
           </select>
         </label>
 
