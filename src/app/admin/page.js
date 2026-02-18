@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import AdminForm from "@/components/AdminForm";
 
 export default function AdminPage() {
