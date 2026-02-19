@@ -29,7 +29,7 @@ export default function NewsList({ news }) {
       : categoria === "juventud"
       ? "Juventud"
       : categoria === "formacion"
-      ? "Escuela de formación, debate y análisis"
+      ? "EFDAP"
       : categoria === "purpura"
       ? "La Purpura"
       : categoria === "geraldine"
