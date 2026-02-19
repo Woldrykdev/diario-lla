@@ -30,6 +30,13 @@ export default function Footer() {
           >
             <img src="/whatsapp.svg" alt="WhatsApp" />
           </a>
+          <a
+            href="https://www.tiktok.com/@juventudllasaladillo"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/tiktok.svg" alt="tiktok" />
+          </a>
         </div>
       </div>
     </footer>
