@@ -8,7 +8,7 @@ export default function Footer() {
 
         <div className="footer-socials">
           <a
-            href="https://facebook.com"
+            href="https://www.facebook.com/profile.php?id=61567696746604"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -16,7 +16,7 @@ export default function Footer() {
           </a>
 
           <a
-            href="https://instagram.com"
+            href="https://instagram.com/lalibertadavanzasaladillo"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -24,7 +24,7 @@ export default function Footer() {
           </a>
 
           <a
-            href="https://wa.me/5490000000000"
+            href="https://wa.me/5492345426884"
             target="_blank"
             rel="noopener noreferrer"
           >
