@@ -50,7 +50,7 @@ export default function NewsList({ news }) {
     heading: { fontSize: "28px", fontWeight: 700, marginBottom: "15px" },
     filterText: { fontSize: "16px", marginBottom: "25px" },
     categoryBanner: { margin: "25px 0 35px 0", width: "100%", borderRadius: "14px", overflow: "hidden" },
-    bannerImage: { width: "100%", height: "320px", objectFit: "cover" },
+    bannerImage: { width: "100%", height: "370px", objectFit: "cover" },
     bannerInicio: { objectPosition: "center 50%" },
     bannerProyectos: { objectPosition: "center 20%" },
     categoriaTexto: { margin: "25px 0 35px 0", padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "12px", fontWeight: 600, fontSize: "16px" },
@@ -62,7 +62,7 @@ export default function NewsList({ news }) {
     featuredExcerpt: { fontSize: "16px", color: "#333" },
     featuredButton: { padding: "10px 16px", backgroundColor: "#0070f3", color: "white", borderRadius: "6px", textDecoration: "none", width: "fit-content", display: "inline-block" },
     newsGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" },
-    // Responsive simple
+  
     responsiveBannerImage: { height: "200px" },
   };
 
