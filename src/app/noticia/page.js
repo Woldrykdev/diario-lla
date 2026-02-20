@@ -1,143 +1,81 @@
- "use client";
-
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import NewsList from "@/components/NewsList";
 
-export default function NewsPage() {
-  const searchParams = useSearchParams();
-  const slug = (searchParams.get("slug") || "").toString().trim();
+export const dynamic = "force-dynamic";
 
-  const [news, setNews] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    async function load() {
-      try {
-        setLoading(true);
-        setError("");
-
-        if (!slug) {
-          setError("Enlace inválido. Falta el slug de la noticia.");
-          setLoading(false);
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from("news")
-          .select("*")
-          .eq("slug", slug)
-          .order("created_at", { ascending: false })
-          .limit(1);
-
-        if (error) {
-          console.error("Error cargando noticia por slug:", slug, error);
-          setError("Error cargando la noticia.");
-          setLoading(false);
-          return;
-        }
-
-        const item = Array.isArray(data) ? data[0] : null;
-        if (!item) {
-          setError(`Noticia no encontrada para el enlace: ${slug}`);
-          setLoading(false);
-          return;
-        }
-
-        setNews(item);
-      } catch (e) {
-        console.error("Error inesperado cargando noticia:", e);
-        setError("Error inesperado cargando la noticia.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div style={styles.container}>
-        <p>Cargando noticia...</p>
-      </div>
-    );
-  }
+export default async function Home() {
+  const { data: news, error } = await supabase
+    .from("news")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   if (error) {
-    return (
-      <div style={styles.container}>
-        <p>{error}</p>
-      </div>
-    );
+    console.error(error);
+    return <p>Error cargando noticias</p>;
   }
 
-  const formattedDate = news?.created_at
-    ? new Date(news.created_at).toLocaleDateString("es-AR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-    : null;
-
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>{news.title}</h1>
+    <div className="container">
+      <NewsList news={news || []} />
 
-      {formattedDate && <p style={styles.date}>{formattedDate}</p>}
+      <section className="mapSection">
+        <h2 className="mapTitle">Dónde encontrarnos</h2>
 
-      {news.image_url && (
-        <Image
-          src={news.image_url}
-          width={900}
-          height={500}
-          alt={news.title}
-          style={styles.image}
-        />
-      )}
+        <div className="mapWrapper">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3242.4451544414574!2d-59.78692672421405!3d-35.641402572600114!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzXCsDM4JzI5LjEiUyA1OcKwNDcnMDMuNyJX!5e0!3m2!1ses-419!2sar!4v1771519412367!5m2!1ses-419!2sar"
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </section>
 
-      <p style={styles.content}>{news.content}</p>
+      <style jsx>{`
+        .container {
+          max-width: 1200px;
+          margin: 40px auto;
+          padding: 0 20px;
+        }
+
+        .mapSection {
+          margin-top: 120px;
+        }
+
+        .mapTitle {
+          font-size: 26px;
+          font-weight: 700;
+          margin-bottom: 20px;
+        }
+
+        .mapWrapper {
+          width: 100%;
+          height: 450px;
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .mapWrapper iframe {
+          width: 100%;
+          height: 100%;
+          border: 0;
+        }
+
+        @media (max-width: 768px) {
+          .mapSection {
+            margin-top: 80px;
+          }
+
+          .mapWrapper {
+            height: 300px;
+          }
+
+          .mapTitle {
+            font-size: 22px;
+          }
+        }
+      `}</style>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "900px",
-    margin: "40px auto",
-    padding: "30px 20px",
-    backgroundColor: "white",
-    borderRadius: "10px",
-    boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
-    boxSizing: "border-box",
-  },
-  title: {
-    fontSize: "32px",
-    fontWeight: "800",
-    marginBottom: "12px",
-    wordBreak: "break-word",
-  },
-  date: {
-    fontSize: "14px",
-    color: "#777",
-    marginBottom: "16px",
-  },
-  image: {
-    width: "100%",
-    height: "auto",
-    maxHeight: "460px",
-    objectFit: "contain",
-    borderRadius: "8px",
-    marginBottom: "20px",
-  },
-  content: {
-    fontSize: "18px",
-    lineHeight: "1.7",
-    color: "#222",
-    whiteSpace: "pre-line",
-    wordBreak: "break-word",
-  },
-};
-

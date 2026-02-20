@@ -3,7 +3,9 @@ import NewsList from "@/components/NewsList";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function Home({ searchParams }) {
+  const categoria = searchParams?.categoria || "general";
+
   const { data: news, error } = await supabase
     .from("news")
     .select("*")
@@ -17,7 +19,20 @@ export default async function Home() {
   return (
     <>
       <div className="container">
-        <NewsList news={news || []} />
+
+        {/* 🔥 Banner SOLO en proyectos */}
+        {categoria === "proyectos" && (
+          <div className="bannerContainer">
+            <img
+              src="/imagenes/proyectos.jpeg"
+              alt="Proyectos"
+              className="banner"
+            />
+          </div>
+        )}
+
+        {/* 🔥 Le pasamos la categoría real a NewsList */}
+        <NewsList news={news || []} categoriaActiva={categoria} />
 
         <section className="mapSection">
           <h2 className="mapTitle">Dónde encontrarnos</h2>
@@ -38,6 +53,17 @@ export default async function Home() {
           max-width: 1200px;
           margin: 40px auto;
           padding: 0 20px;
+        }
+
+        .bannerContainer {
+          margin-bottom: 30px;
+        }
+
+        .banner {
+          width: 100%;
+          height: 350px;
+          object-fit: cover;
+          border-radius: 14px;
         }
 
         .mapSection {
@@ -64,18 +90,13 @@ export default async function Home() {
           border: 0;
         }
 
-        /* 📱 Responsive */
         @media (max-width: 768px) {
-          .mapSection {
-            margin-top: 80px;
-          }
-
           .mapWrapper {
             height: 300px;
           }
 
-          .mapTitle {
-            font-size: 22px;
+          .banner {
+            height: 220px;
           }
         }
       `}</style>

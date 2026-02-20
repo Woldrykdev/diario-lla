@@ -21,7 +21,7 @@ export default function NewsList({ news }) {
 
   const categoriaLabel =
     categoria === "general"
-      ? "Informacion General"
+      ? "Información General"
       : categoria === "proyectos"
       ? "Proyectos del Concejo Deliberante"
       : categoria === "visitas"
@@ -31,7 +31,7 @@ export default function NewsList({ news }) {
       : categoria === "formacion"
       ? "EFDAP"
       : categoria === "purpura"
-      ? "La Purpura"
+      ? "La Púrpura"
       : categoria === "geraldine"
       ? "Geraldine Calvella"
       : "Todas";
@@ -47,9 +47,43 @@ export default function NewsList({ news }) {
   return (
     <>
       <h1 className="news-heading">Últimas Noticias</h1>
+
       <p className="news-filter-text">
         Mostrando: <strong>{categoriaLabel}</strong>
       </p>
+
+      {!categoria && (
+        <div className="category-banner">
+          <img
+            src="/inicioimg.jpeg"
+            alt="Inicio"
+            className="category-banner-image banner-inicio"
+          />
+        </div>
+      )}
+
+      {categoria === "proyectos" && (
+        <div className="category-banner">
+          <img
+            src="/proyectos.jpeg"
+            alt="Proyectos"
+            className="category-banner-image banner-proyectos"
+          />
+        </div>
+      )}
+
+      {categoria === "formacion" && (
+        <div className="categoria-texto">
+          Directora de EFDAP, Sandra Analia Cabali.
+        </div>
+      )}
+
+      {categoria === "juventud" && (
+        <div className="categoria-texto">
+          <p>Coordinador: Juan Manuel Gimenez Giribone</p>
+          <p>SubCoordinador: Santino Valverde</p>
+        </div>
+      )}
 
       {featured && (
         <section className="featured-section">
@@ -88,7 +122,46 @@ export default function NewsList({ news }) {
           <NewsCard key={item.id} news={item} />
         ))}
       </div>
+
+      <style jsx>{`
+        .category-banner {
+          margin: 25px 0 35px 0;
+        }
+
+        .category-banner-image {
+          width: 100%;
+          height: 320px;
+          object-fit: cover;
+          border-radius: 14px;
+        }
+
+        .banner-proyectos {
+          object-position: center 20%;
+        }
+
+        .banner-inicio {
+          object-position: center 50%;
+        }
+
+        .categoria-texto {
+          margin: 25px 0 35px 0;
+          padding: 20px;
+          background: #f5f5f5;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 16px;
+        }
+
+        .categoria-texto p {
+          margin: 6px 0;
+        }
+
+        @media (max-width: 768px) {
+          .category-banner-image {
+            height: 200px;
+          }
+        }
+      `}</style>
     </>
   );
 }
-

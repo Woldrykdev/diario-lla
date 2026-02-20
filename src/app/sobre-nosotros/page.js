@@ -143,7 +143,6 @@ export default async function SobreNosotros() {
           color: #666;
         }
 
-        /* 📱 Responsive */
         @media (max-width: 768px) {
           .peopleGrid {
             grid-template-columns: 1fr;
