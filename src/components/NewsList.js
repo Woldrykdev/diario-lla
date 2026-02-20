@@ -161,6 +161,66 @@ export default function NewsList({ news }) {
             height: 200px;
           }
         }
+
+        .news-heading {
+          font-size: 28px;
+          font-weight: 700;
+          margin-bottom: 15px;
+        }
+
+        .news-filter-text {
+          font-size: 16px;
+          margin-bottom: 25px;
+        }
+
+        .featured-section {
+          display: flex;
+          flex-direction: column;
+          margin-bottom: 40px;
+          gap: 20px;
+        }
+
+        .featured-image-wrapper {
+          width: 100%;
+          overflow: hidden;
+          border-radius: 14px;
+        }
+
+        .featured-content {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .featured-date {
+          font-size: 14px;
+          color: #777;
+        }
+
+        .featured-title {
+          font-size: 22px;
+          font-weight: 700;
+        }
+
+        .featured-excerpt {
+          font-size: 16px;
+          color: #333;
+        }
+
+        .featured-button {
+          padding: 10px 16px;
+          background: #0070f3;
+          color: white;
+          border-radius: 6px;
+          text-decoration: none;
+          width: fit-content;
+        }
+
+        .news-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 20px;
+        }
       `}</style>
     </>
   );
