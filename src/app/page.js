@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import NewsList from "@/components/NewsList";
+import ContactForm from "@/components/ContactForm";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,6 @@ export default async function Home({ searchParams }) {
     <>
       <div className="container">
 
-        {/* 🔥 Banner SOLO en proyectos */}
         {categoria === "proyectos" && (
           <div className="bannerContainer">
             <img
@@ -31,8 +31,9 @@ export default async function Home({ searchParams }) {
           </div>
         )}
 
-        {/* 🔥 Le pasamos la categoría real a NewsList */}
         <NewsList news={news || []} categoriaActiva={categoria} />
+
+            <ContactForm />
 
         <section className="mapSection">
           <h2 className="mapTitle">Dónde encontrarnos</h2>
@@ -46,6 +47,7 @@ export default async function Home({ searchParams }) {
             ></iframe>
           </div>
         </section>
+
       </div>
 
       <style>{`
@@ -65,6 +67,40 @@ export default async function Home({ searchParams }) {
           object-fit: cover;
           border-radius: 14px;
         }
+
+        /* ================= CONTACTO ================= */
+
+        .contactSection {
+          margin: 120px 0 100px 0;
+          display: flex;
+          justify-content: center;
+        }
+
+        .contactCard {
+          width: 100%;
+          max-width: 750px;
+          background: #ffffff;
+          padding: 50px 40px;
+          border-radius: 18px;
+          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+          border: 1px solid #eee;
+        }
+
+        .contactTitle {
+          font-size: 28px;
+          font-weight: 700;
+          margin-bottom: 18px;
+          color: #111;
+        }
+
+        .contactText {
+          font-size: 15px;
+          color: #555;
+          margin-bottom: 30px;
+          line-height: 1.7;
+        }
+
+        /* ================= MAPA ================= */
 
         .mapSection {
           margin-top: 120px;
@@ -90,13 +126,27 @@ export default async function Home({ searchParams }) {
           border: 0;
         }
 
-        @media (max-width: 768px) {
-          .mapWrapper {
-            height: 300px;
-          }
+        /* ================= RESPONSIVE ================= */
 
+        @media (max-width: 768px) {
           .banner {
             height: 220px;
+          }
+
+          .contactCard {
+            padding: 35px 25px;
+          }
+
+          .contactTitle {
+            font-size: 22px;
+          }
+
+          .contactText {
+            font-size: 14px;
+          }
+
+          .mapWrapper {
+            height: 300px;
           }
         }
       `}</style>
