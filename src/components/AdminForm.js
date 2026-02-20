@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 
 export default function AdminForm() {
   const [title, setTitle] = useState("");
-  const [slugInput, setSlugInput] = useState(""); // slug opcional manual
+  const [slugInput, setSlugInput] = useState(""); 
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -21,7 +21,6 @@ export default function AdminForm() {
     setLoading(true);
 
     try {
-      // 🔐 Verificar usuario logueado
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -30,14 +29,13 @@ export default function AdminForm() {
         throw new Error("No estás logueado. Iniciá sesión para publicar.");
       }
 
-      // 🔥 Slug: si el usuario lo escribe, lo uso; si no, lo genero desde el título
       const baseForSlug = (slugInput || title).toString();
 
       const slug = baseForSlug
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, "-") // espacios -> guiones
-        .replace(/[^\w-]+/g, ""); // limpia caracteres raros
+        .replace(/\s+/g, "-") 
+        .replace(/[^\w-]+/g, ""); 
 
       if (!slug) {
         throw new Error("El título es inválido para generar el enlace (slug).");
@@ -50,7 +48,7 @@ export default function AdminForm() {
         const fileName = `${Date.now()}-${image.name}`;
 
         const { error: uploadError } = await supabase.storage
-          .from("news-images") // ⚠️ Asegurate que el bucket se llame así
+          .from("news-images") 
           .upload(fileName, image);
 
         if (uploadError) {
@@ -67,8 +65,6 @@ export default function AdminForm() {
         imageUrl = data.publicUrl;
       }
 
-      // ⭐ Si esta noticia es destacada, desmarcamos cualquier otra destacada del mismo usuario.
-      // Si falla este paso, solo lo registramos en consola y seguimos (no bloquea la publicación).
       if (isFeatured) {
         const { error: clearFeaturedError } = await supabase
           .from("news")

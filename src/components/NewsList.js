@@ -1,5 +1,3 @@
-"use client";
-
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -44,72 +42,150 @@ export default function NewsList({ news }) {
       year: "numeric",
     });
 
+  // OBJETOS DE ESTILO
+  const styles = {
+    heading: {
+      fontSize: "28px",
+      fontWeight: 700,
+      marginBottom: "15px",
+    },
+    filterText: {
+      fontSize: "16px",
+      marginBottom: "25px",
+    },
+    categoryBanner: {
+      margin: "25px 0 35px 0",
+      width: "100%",
+      borderRadius: "14px",
+      overflow: "hidden",
+    },
+    bannerImage: {
+      width: "100%",
+      height: "320px",
+      objectFit: "cover",
+    },
+    bannerInicio: {
+      objectPosition: "center 50%",
+    },
+    bannerProyectos: {
+      objectPosition: "center 20%",
+    },
+    categoriaTexto: {
+      margin: "25px 0 35px 0",
+      padding: "20px",
+      backgroundColor: "#f5f5f5",
+      borderRadius: "12px",
+      fontWeight: 600,
+      fontSize: "16px",
+    },
+    categoriaTextoP: {
+      margin: "6px 0",
+    },
+    featuredSection: {
+      display: "flex",
+      flexDirection: "column",
+      marginBottom: "40px",
+      gap: "20px",
+    },
+    featuredContent: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "10px",
+    },
+    featuredDate: {
+      fontSize: "14px",
+      color: "#777",
+    },
+    featuredTitle: {
+      fontSize: "22px",
+      fontWeight: "700",
+    },
+    featuredExcerpt: {
+      fontSize: "16px",
+      color: "#333",
+    },
+    featuredButton: {
+      padding: "10px 16px",
+      backgroundColor: "#0070f3",
+      color: "white",
+      borderRadius: "6px",
+      textDecoration: "none",
+      width: "fit-content",
+      display: "inline-block",
+    },
+    newsGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+      gap: "20px",
+    },
+  };
+
   return (
     <>
-      <h1 className="news-heading">Últimas Noticias</h1>
+      <h1 style={styles.heading}>Últimas Noticias</h1>
 
-      <p className="news-filter-text">
+      <p style={styles.filterText}>
         Mostrando: <strong>{categoriaLabel}</strong>
       </p>
 
       {!categoria && (
-        <div className="category-banner">
+        <div style={styles.categoryBanner}>
           <img
             src="/inicioimg.jpeg"
             alt="Inicio"
-            className="category-banner-image banner-inicio"
+            style={{ ...styles.bannerImage, ...styles.bannerInicio }}
           />
         </div>
       )}
 
       {categoria === "proyectos" && (
-        <div className="category-banner">
+        <div style={styles.categoryBanner}>
           <img
             src="/proyectos.jpeg"
             alt="Proyectos"
-            className="category-banner-image banner-proyectos"
+            style={{ ...styles.bannerImage, ...styles.bannerProyectos }}
           />
         </div>
       )}
 
       {categoria === "formacion" && (
-        <div className="categoria-texto">
+        <div style={styles.categoriaTexto}>
           Directora de EFDAP, Sandra Analia Cabali.
         </div>
       )}
 
       {categoria === "juventud" && (
-        <div className="categoria-texto">
-          <p>Coordinador: Juan Manuel Gimenez Giribone</p>
-          <p>SubCoordinador: Santino Valverde</p>
+        <div style={styles.categoriaTexto}>
+          <p style={styles.categoriaTextoP}>Coordinador: Juan Manuel Gimenez Giribone</p>
+          <p style={styles.categoriaTextoP}>SubCoordinador: Santino Valverde</p>
         </div>
       )}
 
       {featured && (
-        <section className="featured-section">
-          <div className="featured-image-wrapper">
-            {featured.image_url && (
+        <section style={styles.featuredSection}>
+          {featured.image_url && (
+            <div style={{ borderRadius: "14px", overflow: "hidden" }}>
               <Image
                 src={featured.image_url}
                 alt={featured.title}
                 width={900}
                 height={500}
-                className="featured-image"
+                style={{ width: "100%", height: "auto", objectFit: "cover" }}
               />
-            )}
-          </div>
+            </div>
+          )}
 
-          <div className="featured-content">
+          <div style={styles.featuredContent}>
             {formattedFeaturedDate && (
-              <p className="featured-date">{formattedFeaturedDate}</p>
+              <p style={styles.featuredDate}>{formattedFeaturedDate}</p>
             )}
-            <h2 className="featured-title">{featured.title}</h2>
-            <p className="featured-excerpt">
+            <h2 style={styles.featuredTitle}>{featured.title}</h2>
+            <p style={styles.featuredExcerpt}>
               {featured.content?.substring(0, 260)}...
             </p>
             <Link
               href={`/noticia?slug=${encodeURIComponent(featured.slug)}`}
-              className="featured-button"
+              style={styles.featuredButton}
             >
               Leer noticia
             </Link>
@@ -117,111 +193,11 @@ export default function NewsList({ news }) {
         </section>
       )}
 
-      <div className="news-grid">
+      <div style={styles.newsGrid}>
         {others?.map((item) => (
           <NewsCard key={item.id} news={item} />
         ))}
       </div>
-
-      <style jsx>{`
-        .category-banner {
-          margin: 25px 0 35px 0;
-        }
-
-        .category-banner-image {
-          width: 100%;
-          height: 320px;
-          object-fit: cover;
-          border-radius: 14px;
-        }
-
-        .banner-proyectos {
-          object-position: center 20%;
-        }
-
-        .banner-inicio {
-          object-position: center 50%;
-        }
-
-        .categoria-texto {
-          margin: 25px 0 35px 0;
-          padding: 20px;
-          background: #f5f5f5;
-          border-radius: 12px;
-          font-weight: 600;
-          font-size: 16px;
-        }
-
-        .categoria-texto p {
-          margin: 6px 0;
-        }
-
-        @media (max-width: 768px) {
-          .category-banner-image {
-            height: 200px;
-          }
-        }
-
-        .news-heading {
-          font-size: 28px;
-          font-weight: 700;
-          margin-bottom: 15px;
-        }
-
-        .news-filter-text {
-          font-size: 16px;
-          margin-bottom: 25px;
-        }
-
-        .featured-section {
-          display: flex;
-          flex-direction: column;
-          margin-bottom: 40px;
-          gap: 20px;
-        }
-
-        .featured-image-wrapper {
-          width: 100%;
-          overflow: hidden;
-          border-radius: 14px;
-        }
-
-        .featured-content {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .featured-date {
-          font-size: 14px;
-          color: #777;
-        }
-
-        .featured-title {
-          font-size: 22px;
-          font-weight: 700;
-        }
-
-        .featured-excerpt {
-          font-size: 16px;
-          color: #333;
-        }
-
-        .featured-button {
-          padding: 10px 16px;
-          background: #0070f3;
-          color: white;
-          border-radius: 6px;
-          text-decoration: none;
-          width: fit-content;
-        }
-
-        .news-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 20px;
-        }
-      `}</style>
     </>
   );
 }
