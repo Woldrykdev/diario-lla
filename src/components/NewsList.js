@@ -1,6 +1,3 @@
-"use client";
-
-
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -47,80 +44,23 @@ export default function NewsList({ news }) {
 
   // OBJETOS DE ESTILO
   const styles = {
-    heading: {
-      fontSize: "28px",
-      fontWeight: 700,
-      marginBottom: "15px",
-    },
-    filterText: {
-      fontSize: "16px",
-      marginBottom: "25px",
-    },
-    categoryBanner: {
-      margin: "25px 0 35px 0",
-      width: "100%",
-      borderRadius: "14px",
-      overflow: "hidden",
-    },
-    bannerImage: {
-      width: "100%",
-      height: "320px",
-      objectFit: "cover",
-    },
-    bannerInicio: {
-      objectPosition: "center 50%",
-    },
-    bannerProyectos: {
-      objectPosition: "center 20%",
-    },
-    categoriaTexto: {
-      margin: "25px 0 35px 0",
-      padding: "20px",
-      backgroundColor: "#f5f5f5",
-      borderRadius: "12px",
-      fontWeight: 600,
-      fontSize: "16px",
-    },
-    categoriaTextoP: {
-      margin: "6px 0",
-    },
-    featuredSection: {
-      display: "flex",
-      flexDirection: "column",
-      marginBottom: "40px",
-      gap: "20px",
-    },
-    featuredContent: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "10px",
-    },
-    featuredDate: {
-      fontSize: "14px",
-      color: "#777",
-    },
-    featuredTitle: {
-      fontSize: "22px",
-      fontWeight: "700",
-    },
-    featuredExcerpt: {
-      fontSize: "16px",
-      color: "#333",
-    },
-    featuredButton: {
-      padding: "10px 16px",
-      backgroundColor: "#0070f3",
-      color: "white",
-      borderRadius: "6px",
-      textDecoration: "none",
-      width: "fit-content",
-      display: "inline-block",
-    },
-    newsGrid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-      gap: "20px",
-    },
+    heading: { fontSize: "28px", fontWeight: 700, marginBottom: "15px" },
+    filterText: { fontSize: "16px", marginBottom: "25px" },
+    categoryBanner: { margin: "25px 0 35px 0", width: "100%", borderRadius: "14px", overflow: "hidden" },
+    bannerImage: { width: "100%", height: "320px", objectFit: "cover" },
+    bannerInicio: { objectPosition: "center 50%" },
+    bannerProyectos: { objectPosition: "center 20%" },
+    categoriaTexto: { margin: "25px 0 35px 0", padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "12px", fontWeight: 600, fontSize: "16px" },
+    categoriaTextoP: { margin: "6px 0" },
+    featuredSection: { display: "flex", flexDirection: "column", marginBottom: "40px", gap: "20px" },
+    featuredContent: { display: "flex", flexDirection: "column", gap: "10px" },
+    featuredDate: { fontSize: "14px", color: "#777" },
+    featuredTitle: { fontSize: "22px", fontWeight: 700 },
+    featuredExcerpt: { fontSize: "16px", color: "#333" },
+    featuredButton: { padding: "10px 16px", backgroundColor: "#0070f3", color: "white", borderRadius: "6px", textDecoration: "none", width: "fit-content", display: "inline-block" },
+    newsGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" },
+    // Responsive simple
+    responsiveBannerImage: { height: "200px" },
   };
 
   return (
@@ -179,17 +119,10 @@ export default function NewsList({ news }) {
           )}
 
           <div style={styles.featuredContent}>
-            {formattedFeaturedDate && (
-              <p style={styles.featuredDate}>{formattedFeaturedDate}</p>
-            )}
+            {formattedFeaturedDate && <p style={styles.featuredDate}>{formattedFeaturedDate}</p>}
             <h2 style={styles.featuredTitle}>{featured.title}</h2>
-            <p style={styles.featuredExcerpt}>
-              {featured.content?.substring(0, 260)}...
-            </p>
-            <Link
-              href={`/noticia?slug=${encodeURIComponent(featured.slug)}`}
-              style={styles.featuredButton}
-            >
+            <p style={styles.featuredExcerpt}>{featured.content?.substring(0, 260)}...</p>
+            <Link href={`/noticia?slug=${encodeURIComponent(featured.slug)}`} style={styles.featuredButton}>
               Leer noticia
             </Link>
           </div>
