@@ -25,7 +25,6 @@ export default async function Home() {
     mapTitleMobile: { fontSize: 22 },
   };
 
-  // Responsive simple usando window.innerWidth
   const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
 
   return (

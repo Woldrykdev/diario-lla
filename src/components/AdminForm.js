@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 
 export default function AdminForm() {
   const [title, setTitle] = useState("");
-  const [slugInput, setSlugInput] = useState(""); 
+  const [slugInput, setSlugInput] = useState("");
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -34,8 +34,8 @@ export default function AdminForm() {
       const slug = baseForSlug
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, "-") 
-        .replace(/[^\w-]+/g, ""); 
+        .replace(/\s+/g, "-")
+        .replace(/[^\w-]+/g, "");
 
       if (!slug) {
         throw new Error("El título es inválido para generar el enlace (slug).");
@@ -43,19 +43,15 @@ export default function AdminForm() {
 
       let imageUrl = null;
 
-      // 📸 Subir imagen si existe
       if (image) {
         const fileName = `${Date.now()}-${image.name}`;
 
         const { error: uploadError } = await supabase.storage
-          .from("news-images") 
+          .from("news-images")
           .upload(fileName, image);
 
         if (uploadError) {
-          console.error("Storage error:", uploadError);
-          alert(uploadError.message);
-          setLoading(false);
-          return;
+          throw new Error(uploadError.message);
         }
 
         const { data } = supabase.storage
@@ -66,44 +62,32 @@ export default function AdminForm() {
       }
 
       if (isFeatured) {
-        const { error: clearFeaturedError } = await supabase
+        await supabase
           .from("news")
           .update({ is_featured: false })
           .eq("is_featured", true)
           .eq("user_id", user.id);
-
-        if (clearFeaturedError) {
-          console.error(
-            "Error limpiando noticias destacadas (se continúa de todas formas):",
-            clearFeaturedError
-          );
-        }
       }
 
-      // 📰 Insertar noticia en la tabla
-      const { error: insertError } = await supabase
-        .from("news")
-        .insert([
-          {
-            title,
-            content,
-            slug,
-            category: category || null,
-            image_url: imageUrl,
-            is_featured: isFeatured,
-            published: true,
-            user_id: user.id,
-          },
-        ]);
+      const { error: insertError } = await supabase.from("news").insert([
+        {
+          title,
+          content,
+          slug,
+          category: category || null,
+          image_url: imageUrl,
+          is_featured: isFeatured,
+          published: true,
+          user_id: user.id,
+        },
+      ]);
 
       if (insertError) {
-        console.error("Insert error:", insertError);
         throw new Error(insertError.message);
       }
 
       setSuccessMessage("Noticia publicada correctamente ✅");
 
-      // 🔄 Resetear formulario
       setTitle("");
       setSlugInput("");
       setCategory("");
@@ -111,7 +95,6 @@ export default function AdminForm() {
       setImage(null);
       setIsFeatured(false);
     } catch (err) {
-      console.error("Unexpected error:", err);
       setErrorMessage(err.message || "Error inesperado");
     } finally {
       setLoading(false);
@@ -130,7 +113,6 @@ export default function AdminForm() {
           Título
           <input
             type="text"
-            placeholder="Título de la noticia"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             style={styles.input}
@@ -146,51 +128,42 @@ export default function AdminForm() {
             style={styles.input}
           >
             <option value="">Seleccionar categoría</option>
-            <option value="general">Informacion general</option>
-            <option value="proyectos">Proyectos del concejo deliberante</option>
+            <option value="general">Información general</option>
+            <option value="proyectos">Proyectos</option>
             <option value="visitas">Visitas institucionales</option>
             <option value="juventud">Juventud</option>
             <option value="formacion">EFDAP</option>
             <option value="purpura">La Purpura</option>
             <option value="geraldine">Geraldine Calvella</option>
-
-
           </select>
         </label>
 
         <label style={styles.label}>
-          Slug (enlace) opcional
+          Slug (opcional)
           <input
             type="text"
-            placeholder="si lo dejas vacío se genera solo"
             value={slugInput}
             onChange={(e) => setSlugInput(e.target.value)}
             style={styles.input}
           />
-          <span style={styles.helperText}>
-            Ejemplo: <code>nueva-medida-en-saladillo</code>
-          </span>
         </label>
 
         <label style={styles.label}>
           Contenido
           <textarea
-            placeholder="Escribí el contenido de la noticia"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             style={styles.textarea}
-            rows={6}
             required
           />
         </label>
 
         <label style={styles.label}>
-          Imagen principal (opcional)
+          Imagen
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setImage(e.target.files[0])}
-            style={styles.fileInput}
           />
         </label>
 
@@ -199,23 +172,20 @@ export default function AdminForm() {
             type="checkbox"
             checked={isFeatured}
             onChange={(e) => setIsFeatured(e.target.checked)}
-            style={styles.checkbox}
           />
-          <span>Marcar como noticia destacada</span>
+          Destacar noticia
         </label>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            ...styles.button,
-            opacity: loading ? 0.7 : 1,
-            cursor: loading ? "not-allowed" : "pointer",
-          }}
-        >
+        <button type="submit" disabled={loading} style={styles.button}>
           {loading ? "Publicando..." : "Publicar"}
         </button>
       </form>
+
+      <div style={{ marginTop: "30px", textAlign: "center" }}>
+        <a href="/admin/messages" style={styles.viewButton}>
+          Ver mensajes recibidos
+        </a>
+      </div>
     </div>
   );
 }
@@ -230,7 +200,7 @@ const styles = {
     boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
   },
   heading: {
-    fontSize: "clamp(22px, 5vw, 28px)",
+    fontSize: "26px",
     fontWeight: "800",
     marginBottom: "20px",
   },
@@ -257,51 +227,43 @@ const styles = {
     borderRadius: "6px",
     border: "1px solid #ddd",
     fontSize: "16px",
-    resize: "vertical",
     minHeight: "120px",
-  },
-  fileInput: {
-    marginTop: "4px",
-    fontSize: "14px",
   },
   checkboxRow: {
     display: "flex",
     alignItems: "center",
     gap: "8px",
-    fontSize: "14px",
-  },
-  checkbox: {
-    width: "18px",
-    height: "18px",
   },
   button: {
-    marginTop: "10px",
     backgroundColor: "#0F2A79",
     color: "white",
     border: "none",
     borderRadius: "6px",
-    padding: "14px 16px",
+    padding: "14px",
     fontSize: "16px",
     fontWeight: "600",
+    cursor: "pointer",
   },
   error: {
     color: "#b91c1c",
     backgroundColor: "#fee2e2",
+    padding: "10px",
     borderRadius: "6px",
-    padding: "10px 12px",
-    fontSize: "14px",
-    marginBottom: "10px",
   },
   success: {
     color: "#166534",
     backgroundColor: "#dcfce7",
+    padding: "10px",
     borderRadius: "6px",
-    padding: "10px 12px",
-    fontSize: "14px",
-    marginBottom: "10px",
   },
-  helperText: {
-    fontSize: "12px",
-    color: "#777",
+  viewButton: {
+    display: "inline-block",
+    backgroundColor: "#111827",
+    color: "white",
+    padding: "12px 20px",
+    borderRadius: "8px",
+    textDecoration: "none",
+    fontWeight: "600",
+    fontSize: "14px",
   },
 };
