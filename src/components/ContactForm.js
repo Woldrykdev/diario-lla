@@ -40,7 +40,7 @@ export default function ContactForm() {
       <section className="contactSection">
         <div className="contactCard">
 
-          <h2 className="contactTitle">Consultas</h2>
+          <h2 className="contactTitle">Enviarnos un mensaje</h2>
 
           <p className="contactText">
             Contacto para afiliaciones, propuestas o consultas.
