@@ -24,7 +24,7 @@ export default function Footer() {
           </a>
 
           <a
-            href="https://wa.me/5492345426884"
+            href="https://wa.me/5492345416418"
             target="_blank"
             rel="noopener noreferrer"
           >
