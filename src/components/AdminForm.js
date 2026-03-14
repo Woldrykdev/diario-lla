@@ -6,6 +6,22 @@ import { supabase } from "@/lib/supabase";
 const MEDIA_IMAGE = "image";
 const MEDIA_VIDEO = "video";
 const MEDIA_PDF = "pdf";
+const MEDIA_DOCX = "docx";
+const MEDIA_DOC = "doc";
+const MEDIA_TEXT = "text";
+const MEDIA_DOCUMENT = "document";
+
+const DOCUMENT_ACCEPT = ".pdf,.doc,.docx,.txt,.rtf,.odt";
+
+function getDocumentType(file) {
+  const name = (file.name || "").toLowerCase();
+  const type = (file.type || "").toLowerCase();
+  if (type.includes("pdf") || name.endsWith(".pdf")) return MEDIA_PDF;
+  if (type.includes("wordprocessingml") || name.endsWith(".docx")) return MEDIA_DOCX;
+  if (type.includes("msword") || name.endsWith(".doc")) return MEDIA_DOC;
+  if (type.includes("text/plain") || name.endsWith(".txt")) return MEDIA_TEXT;
+  return MEDIA_DOCUMENT;
+}
 
 export default function AdminForm() {
   const [title, setTitle] = useState("");
@@ -15,7 +31,7 @@ export default function AdminForm() {
   const [imageFiles, setImageFiles] = useState([]);
   const [videoEntries, setVideoEntries] = useState([]);
   const [videoUrlInput, setVideoUrlInput] = useState("");
-  const [pdfFiles, setPdfFiles] = useState([]);
+  const [documentFiles, setDocumentFiles] = useState([]);
   const [isFeatured, setIsFeatured] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -51,14 +67,14 @@ export default function AdminForm() {
     setVideoEntries((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const addPdfFiles = (e) => {
-    const files = Array.from(e.target.files || []).filter((f) => f.type === "application/pdf");
-    setPdfFiles((prev) => [...prev, ...files]);
+  const addDocumentFiles = (e) => {
+    const files = Array.from(e.target.files || []);
+    setDocumentFiles((prev) => [...prev, ...files]);
     e.target.value = "";
   };
 
-  const removePdf = (index) => {
-    setPdfFiles((prev) => prev.filter((_, i) => i !== index));
+  const removeDocument = (index) => {
+    setDocumentFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -122,16 +138,17 @@ export default function AdminForm() {
         }
       }
 
-      for (const file of pdfFiles) {
-        const fileName = `pdf-${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
+      for (const file of documentFiles) {
+        const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+        const fileName = `doc-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
         const { error: uploadError } = await supabase.storage
           .from("news-images")
-          .upload(fileName, file, { contentType: "application/pdf" });
+          .upload(fileName, file, { contentType: file.type || "application/octet-stream" });
 
         if (uploadError) throw new Error(uploadError.message);
 
         const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
-        media.push({ type: MEDIA_PDF, url: data.publicUrl });
+        media.push({ type: getDocumentType(file), url: data.publicUrl });
       }
 
       if (isFeatured) {
@@ -171,7 +188,7 @@ export default function AdminForm() {
       setImageFiles([]);
       setVideoEntries([]);
       setVideoUrlInput("");
-      setPdfFiles([]);
+      setDocumentFiles([]);
       setIsFeatured(false);
     } catch (err) {
       setErrorMessage(err.message || "Error inesperado");
@@ -296,17 +313,17 @@ export default function AdminForm() {
         </div>
 
         <div style={styles.label}>
-          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>PDFs (opcional)</span>
+          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>Documentos (opcional)</span>
           <p style={{ fontSize: 13, color: "#666", marginBottom: 8 }}>
-            Subí uno o más archivos PDF para que se puedan ver en la noticia.
+            PDF, Word (.doc, .docx), texto (.txt), RTF, ODT. Se verán dentro de la noticia.
           </p>
-          <input type="file" accept="application/pdf" multiple onChange={addPdfFiles} />
-          {pdfFiles.length > 0 && (
+          <input type="file" accept={DOCUMENT_ACCEPT} multiple onChange={addDocumentFiles} />
+          {documentFiles.length > 0 && (
             <ul style={styles.mediaList}>
-              {pdfFiles.map((file, i) => (
+              {documentFiles.map((file, i) => (
                 <li key={i} style={styles.mediaItem}>
                   {file.name}
-                  <button type="button" onClick={() => removePdf(i)} style={styles.removeBtn}>
+                  <button type="button" onClick={() => removeDocument(i)} style={styles.removeBtn}>
                     Quitar
                   </button>
                 </li>

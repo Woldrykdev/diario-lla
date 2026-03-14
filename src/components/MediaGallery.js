@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
-const PdfViewer = dynamic(() => import("@/components/PdfViewer"), { ssr: false });
+const DocumentViewer = dynamic(() => import("@/components/DocumentViewer"), { ssr: false });
 
 function getYouTubeEmbedUrl(url) {
   try {
@@ -92,10 +92,10 @@ export default function MediaGallery({ media, imageUrlFallback, title }) {
           );
         }
 
-        if (item.type === "pdf") {
+        if (["pdf", "docx", "doc", "text", "document"].includes(item.type)) {
           return (
             <div key={i} className="noticia-pdf-wrapper">
-              <PdfViewer url={item.url} title={title} />
+              <DocumentViewer type={item.type} url={item.url} />
             </div>
           );
         }

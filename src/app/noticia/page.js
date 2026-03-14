@@ -178,6 +178,55 @@ export default async function NoticiaPage({ searchParams }) {
           font-size: 14px;
           color: #666;
         }
+        .noticia-doc-viewer {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .noticia-doc-iframe {
+          width: 100%;
+          height: 600px;
+          border: 0;
+          border-radius: 8px;
+          background: #f5f5f5;
+        }
+        .noticia-docx-viewer,
+        .noticia-text-viewer {
+          width: 100%;
+          padding: 0 16px 16px;
+        }
+        .noticia-docx-container {
+          width: 100%;
+          min-height: 200px;
+          background: #fff;
+          padding: 24px;
+          border-radius: 8px;
+          margin-bottom: 12px;
+          overflow: auto;
+          max-height: 70vh;
+        }
+        .noticia-docx-container .docx-wrapper {
+          font-family: inherit;
+        }
+        .noticia-text-content {
+          white-space: pre-wrap;
+          word-break: break-word;
+          font-size: 15px;
+          line-height: 1.6;
+          color: #333;
+          background: #fff;
+          padding: 20px;
+          border-radius: 8px;
+          margin: 0 0 12px 0;
+          max-height: 500px;
+          overflow: auto;
+        }
+        @media (max-width: 768px) {
+          .noticia-doc-iframe {
+            height: 400px;
+          }
+        }
         .noticia-date {
           font-size: 14px;
           color: #777;
