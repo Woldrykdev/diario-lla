@@ -76,7 +76,7 @@ export default function AdminForm() {
         throw new Error("No estás logueado. Iniciá sesión para publicar.");
       }
 
-      const baseForSlug = (slugInput || title).toString();
+      const baseForSlug = (slugInput || title || `noticia-${Date.now()}`).toString();
       const slug = baseForSlug
         .toLowerCase()
         .trim()
@@ -84,7 +84,7 @@ export default function AdminForm() {
         .replace(/[^\w-]+/g, "");
 
       if (!slug) {
-        throw new Error("El título es inválido para generar el enlace (slug).");
+        throw new Error("El enlace (slug) es inválido.");
       }
 
       const media = [];
@@ -189,13 +189,13 @@ export default function AdminForm() {
 
       <form onSubmit={handleSubmit} style={styles.form}>
         <label style={styles.label}>
-          Título
+          Título (opcional)
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             style={styles.input}
-            required
+            placeholder="Sin título"
           />
         </label>
 
@@ -228,12 +228,12 @@ export default function AdminForm() {
         </label>
 
         <label style={styles.label}>
-          Contenido
+          Contenido / descripción (opcional)
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             style={styles.textarea}
-            required
+            placeholder="Sin descripción"
           />
         </label>
 

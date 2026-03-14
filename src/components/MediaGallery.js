@@ -1,6 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
+
+const PdfViewer = dynamic(() => import("@/components/PdfViewer"), { ssr: false });
 
 function getYouTubeEmbedUrl(url) {
   try {
@@ -92,19 +95,7 @@ export default function MediaGallery({ media, imageUrlFallback, title }) {
         if (item.type === "pdf") {
           return (
             <div key={i} className="noticia-pdf-wrapper">
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="noticia-pdf-link"
-              >
-                Abrir PDF en nueva pestaña
-              </a>
-              <iframe
-                src={`${item.url}#view=FitH`}
-                title={`PDF ${i + 1}`}
-                className="noticia-pdf-iframe"
-              />
+              <PdfViewer url={item.url} title={title} />
             </div>
           );
         }

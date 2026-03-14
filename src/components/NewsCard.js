@@ -19,7 +19,7 @@ export default function NewsCard({ news }) {
       {coverImageUrl && (
         <Image
           src={coverImageUrl}
-          alt={news.title}
+          alt={news.title || "Imagen de la noticia"}
           width={600}
           height={350}
           className="news-card-image"
@@ -28,9 +28,9 @@ export default function NewsCard({ news }) {
 
       <div className="news-card-content">
         {formattedDate && <p className="news-card-date">{formattedDate}</p>}
-        <h2 className="news-card-title">{news.title}</h2>
+        <h2 className="news-card-title">{news.title || "Sin título"}</h2>
         <p className="news-card-excerpt">
-          {(news.content || "").substring(0, 160)}...
+          {(news.content || "").trim() ? `${(news.content || "").substring(0, 160)}...` : "Sin descripción"}
         </p>
 
         {hasSlug ? (

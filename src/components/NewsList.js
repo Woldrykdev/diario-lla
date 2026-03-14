@@ -114,7 +114,7 @@ export default function NewsList({ news }) {
             <div style={{ borderRadius: "14px", overflow: "hidden" }}>
               <Image
                 src={getFirstImageUrl(featured)}
-                alt={featured.title}
+                alt={featured.title || "Imagen de la noticia"}
                 width={900}
                 height={500}
                 style={{ width: "100%", height: "auto", objectFit: "cover" }}
@@ -124,8 +124,10 @@ export default function NewsList({ news }) {
 
           <div style={styles.featuredContent}>
             {formattedFeaturedDate && <p style={styles.featuredDate}>{formattedFeaturedDate}</p>}
-            <h2 style={styles.featuredTitle}>{featured.title}</h2>
-            <p style={styles.featuredExcerpt}>{featured.content?.substring(0, 260)}...</p>
+            <h2 style={styles.featuredTitle}>{featured.title || "Sin título"}</h2>
+            <p style={styles.featuredExcerpt}>
+              {(featured.content || "").trim() ? `${(featured.content || "").substring(0, 260)}...` : "Sin descripción"}
+            </p>
             <Link href={`/noticia?slug=${encodeURIComponent(featured.slug)}`} style={styles.featuredButton}>
               Leer noticia
             </Link>

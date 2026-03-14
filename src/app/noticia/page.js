@@ -44,10 +44,12 @@ export default async function NoticiaPage({ searchParams }) {
         <MediaGallery
           media={article.media}
           imageUrlFallback={article.image_url}
-          title={article.title}
+          title={article.title || "Noticia"}
         />
         {formattedDate && <p className="noticia-date">{formattedDate}</p>}
-        <h1 className="noticia-title">{article.title}</h1>
+        {(article.title || "").trim() && (
+          <h1 className="noticia-title">{article.title}</h1>
+        )}
         <div
           className="noticia-body"
           {...(isHtml ? { dangerouslySetInnerHTML: { __html: content } } : {})}
@@ -128,6 +130,35 @@ export default async function NoticiaPage({ searchParams }) {
           box-shadow: 0 8px 24px rgba(0,0,0,0.08);
           background: #f5f5f5;
           margin-bottom: 8px;
+          padding: 16px 0;
+        }
+        .noticia-pdf-viewer {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
+        .noticia-pdf-viewer .noticia-pdf-page {
+          margin: 0 auto;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        .noticia-pdf-viewer .noticia-pdf-page canvas {
+          max-width: 100%;
+          height: auto;
+        }
+        .noticia-pdf-loading {
+          padding: 40px 20px;
+          color: #666;
+          text-align: center;
+        }
+        .noticia-pdf-fallback {
+          padding: 24px;
+          text-align: center;
+        }
+        .noticia-pdf-fallback p {
+          margin: 0 0 12px 0;
+          color: #666;
         }
         .noticia-pdf-link {
           display: inline-block;
@@ -138,21 +169,14 @@ export default async function NoticiaPage({ searchParams }) {
           font-size: 14px;
           font-weight: 600;
           border-radius: 8px;
-          margin: 12px 0 12px 12px;
         }
         .noticia-pdf-link:hover {
           opacity: 0.9;
         }
-        .noticia-pdf-iframe {
-          width: 100%;
-          height: 600px;
-          border: 0;
-          display: block;
-        }
-        @media (max-width: 768px) {
-          .noticia-pdf-iframe {
-            height: 400px;
-          }
+        .noticia-pdf-pagenum {
+          margin: 0;
+          font-size: 14px;
+          color: #666;
         }
         .noticia-date {
           font-size: 14px;
