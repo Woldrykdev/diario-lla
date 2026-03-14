@@ -122,7 +122,7 @@ export default function AdminForm() {
         title,
         content,
         slug,
-        category: category || null,
+        category: (category && category.trim()) ? category.trim() : "general",
         image_url: imageUrl,
         is_featured: isFeatured,
         published: true,
