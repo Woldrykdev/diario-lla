@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import NewsCard from "@/components/NewsCard";
+import { getFirstImageUrl } from "@/lib/media";
 
 export default function NewsList({ news }) {
   const searchParams = useSearchParams();
@@ -109,10 +110,10 @@ export default function NewsList({ news }) {
 
       {featured && (
         <section style={styles.featuredSection}>
-          {featured.image_url && (
+          {getFirstImageUrl(featured) && (
             <div style={{ borderRadius: "14px", overflow: "hidden" }}>
               <Image
-                src={featured.image_url}
+                src={getFirstImageUrl(featured)}
                 alt={featured.title}
                 width={900}
                 height={500}

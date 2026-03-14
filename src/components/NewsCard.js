@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getFirstImageUrl } from "@/lib/media";
 
 export default function NewsCard({ news }) {
   const formattedDate = news?.created_at
@@ -11,12 +12,13 @@ export default function NewsCard({ news }) {
     : null;
 
   const hasSlug = !!(news?.slug && news.slug.trim());
+  const coverImageUrl = getFirstImageUrl(news);
 
   return (
     <div className="news-card">
-      {news.image_url && (
+      {coverImageUrl && (
         <Image
-          src={news.image_url}
+          src={coverImageUrl}
           alt={news.title}
           width={600}
           height={350}

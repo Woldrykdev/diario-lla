@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import MediaGallery from "@/components/MediaGallery";
 
 export const dynamic = "force-dynamic";
 
@@ -41,17 +41,11 @@ export default async function NoticiaPage({ searchParams }) {
       </Link>
 
       <article className="noticia-article">
-        {article.image_url && (
-          <div className="noticia-image-wrapper">
-            <Image
-              src={article.image_url}
-              alt={article.title}
-              width={900}
-              height={500}
-              className="noticia-image"
-            />
-          </div>
-        )}
+        <MediaGallery
+          media={article.media}
+          imageUrlFallback={article.image_url}
+          title={article.title}
+        />
         {formattedDate && <p className="noticia-date">{formattedDate}</p>}
         <h1 className="noticia-title">{article.title}</h1>
         <div
@@ -82,17 +76,50 @@ export default async function NoticiaPage({ searchParams }) {
         .noticia-article {
           margin-bottom: 60px;
         }
+        .noticia-media-gallery {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          margin-bottom: 24px;
+        }
         .noticia-image-wrapper {
           width: 100%;
           border-radius: 14px;
           overflow: hidden;
-          margin-bottom: 20px;
           box-shadow: 0 8px 24px rgba(0,0,0,0.08);
         }
         .noticia-image {
           width: 100%;
           height: auto;
           display: block;
+        }
+        .noticia-video-wrapper {
+          width: 100%;
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+          aspect-ratio: 16 / 9;
+          background: #111;
+        }
+        .noticia-video-iframe {
+          width: 100%;
+          height: 100%;
+          border: 0;
+        }
+        .noticia-video-tag {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+        .noticia-video-link {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          min-height: 200px;
+          color: #fff;
+          text-decoration: none;
+          font-size: 18px;
         }
         .noticia-date {
           font-size: 14px;

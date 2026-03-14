@@ -3,16 +3,51 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
+const MEDIA_IMAGE = "image";
+const MEDIA_VIDEO = "video";
+
 export default function AdminForm() {
   const [title, setTitle] = useState("");
   const [slugInput, setSlugInput] = useState("");
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [videoEntries, setVideoEntries] = useState([]);
+  const [videoUrlInput, setVideoUrlInput] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  const addImageFiles = (e) => {
+    const files = Array.from(e.target.files || []);
+    setImageFiles((prev) => [...prev, ...files]);
+    e.target.value = "";
+  };
+
+  const removeImage = (index) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const addVideoFile = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setVideoEntries((prev) => [...prev, { type: "file", file }]);
+      e.target.value = "";
+    }
+  };
+
+  const addVideoUrl = () => {
+    const url = videoUrlInput.trim();
+    if (url) {
+      setVideoEntries((prev) => [...prev, { type: "url", url }]);
+      setVideoUrlInput("");
+    }
+  };
+
+  const removeVideo = (index) => {
+    setVideoEntries((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +65,6 @@ export default function AdminForm() {
       }
 
       const baseForSlug = (slugInput || title).toString();
-
       const slug = baseForSlug
         .toLowerCase()
         .trim()
@@ -41,24 +75,39 @@ export default function AdminForm() {
         throw new Error("El título es inválido para generar el enlace (slug).");
       }
 
+      const media = [];
       let imageUrl = null;
 
-      if (image) {
-        const fileName = `${Date.now()}-${image.name}`;
-
+      for (const file of imageFiles) {
+        const fileName = `img-${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
         const { error: uploadError } = await supabase.storage
           .from("news-images")
-          .upload(fileName, image);
+          .upload(fileName, file);
 
-        if (uploadError) {
-          throw new Error(uploadError.message);
+        if (uploadError) throw new Error(uploadError.message);
+
+        const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+        const url = data.publicUrl;
+        media.push({ type: MEDIA_IMAGE, url });
+        if (!imageUrl) imageUrl = url;
+      }
+
+      for (const entry of videoEntries) {
+        if (entry.type === "url") {
+          media.push({ type: MEDIA_VIDEO, url: entry.url });
+        } else {
+          const file = entry.file;
+          const ext = (file.name.split(".").pop() || "mp4").toLowerCase();
+          const fileName = `vid-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const { error: uploadError } = await supabase.storage
+            .from("news-images")
+            .upload(fileName, file);
+
+          if (uploadError) throw new Error(uploadError.message);
+
+          const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+          media.push({ type: MEDIA_VIDEO, url: data.publicUrl });
         }
-
-        const { data } = supabase.storage
-          .from("news-images")
-          .getPublicUrl(fileName);
-
-        imageUrl = data.publicUrl;
       }
 
       if (isFeatured) {
@@ -69,30 +118,35 @@ export default function AdminForm() {
           .eq("user_id", user.id);
       }
 
-      const { error: insertError } = await supabase.from("news").insert([
-        {
-          title,
-          content,
-          slug,
-          category: category || null,
-          image_url: imageUrl,
-          is_featured: isFeatured,
-          published: true,
-          user_id: user.id,
-        },
-      ]);
+      const payload = {
+        title,
+        content,
+        slug,
+        category: category || null,
+        image_url: imageUrl,
+        is_featured: isFeatured,
+        published: true,
+        user_id: user.id,
+      };
+
+      if (media.length > 0) {
+        payload.media = media;
+      }
+
+      const { error: insertError } = await supabase.from("news").insert([payload]);
 
       if (insertError) {
         throw new Error(insertError.message);
       }
 
       setSuccessMessage("Noticia publicada correctamente ✅");
-
       setTitle("");
       setSlugInput("");
       setCategory("");
       setContent("");
-      setImage(null);
+      setImageFiles([]);
+      setVideoEntries([]);
+      setVideoUrlInput("");
       setIsFeatured(false);
     } catch (err) {
       setErrorMessage(err.message || "Error inesperado");
@@ -158,14 +212,63 @@ export default function AdminForm() {
           />
         </label>
 
-        <label style={styles.label}>
-          Imagen
+        <div style={styles.label}>
+          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>Fotos (podés subir varias)</span>
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
+            multiple
+            onChange={addImageFiles}
           />
-        </label>
+          {imageFiles.length > 0 && (
+            <ul style={styles.mediaList}>
+              {imageFiles.map((file, i) => (
+                <li key={i} style={styles.mediaItem}>
+                  {file.name}
+                  <button type="button" onClick={() => removeImage(i)} style={styles.removeBtn}>
+                    Quitar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div style={styles.label}>
+          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>Videos (opcional)</span>
+          <p style={{ fontSize: 13, color: "#666", marginBottom: 8 }}>
+            Subí un archivo de video o pegá una URL (YouTube, Vimeo o enlace directo .mp4).
+          </p>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 8 }}>
+            <input
+              type="file"
+              accept="video/*"
+              onChange={addVideoFile}
+            />
+            <input
+              type="url"
+              placeholder="https://youtube.com/... o URL del video"
+              value={videoUrlInput}
+              onChange={(e) => setVideoUrlInput(e.target.value)}
+              style={{ ...styles.input, flex: 1, minWidth: 200 }}
+            />
+            <button type="button" onClick={addVideoUrl} style={styles.addUrlBtn}>
+              Añadir URL
+            </button>
+          </div>
+          {videoEntries.length > 0 && (
+            <ul style={styles.mediaList}>
+              {videoEntries.map((entry, i) => (
+                <li key={i} style={styles.mediaItem}>
+                  {entry.type === "file" ? entry.file.name : entry.url}
+                  <button type="button" onClick={() => removeVideo(i)} style={styles.removeBtn}>
+                    Quitar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <label style={styles.checkboxRow}>
           <input
@@ -228,6 +331,40 @@ const styles = {
     border: "1px solid #ddd",
     fontSize: "16px",
     minHeight: "120px",
+  },
+  mediaList: {
+    listStyle: "none",
+    padding: 0,
+    margin: "8px 0 0 0",
+  },
+  mediaItem: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "8px 10px",
+    background: "#f5f5f5",
+    borderRadius: 6,
+    marginBottom: 6,
+    fontSize: 14,
+  },
+  removeBtn: {
+    background: "#dc2626",
+    color: "white",
+    border: "none",
+    padding: "4px 10px",
+    borderRadius: 4,
+    cursor: "pointer",
+    fontSize: 12,
+  },
+  addUrlBtn: {
+    background: "#0F2A79",
+    color: "white",
+    border: "none",
+    padding: "12px 16px",
+    borderRadius: 6,
+    cursor: "pointer",
+    fontSize: 14,
+    fontWeight: 600,
   },
   checkboxRow: {
     display: "flex",
