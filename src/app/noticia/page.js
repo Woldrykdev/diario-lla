@@ -121,6 +121,39 @@ export default async function NoticiaPage({ searchParams }) {
           text-decoration: none;
           font-size: 18px;
         }
+        .noticia-pdf-wrapper {
+          width: 100%;
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+          background: #f5f5f5;
+          margin-bottom: 8px;
+        }
+        .noticia-pdf-link {
+          display: inline-block;
+          padding: 10px 16px;
+          background: #0F2A79;
+          color: white;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 600;
+          border-radius: 8px;
+          margin: 12px 0 12px 12px;
+        }
+        .noticia-pdf-link:hover {
+          opacity: 0.9;
+        }
+        .noticia-pdf-iframe {
+          width: 100%;
+          height: 600px;
+          border: 0;
+          display: block;
+        }
+        @media (max-width: 768px) {
+          .noticia-pdf-iframe {
+            height: 400px;
+          }
+        }
         .noticia-date {
           font-size: 14px;
           color: #777;

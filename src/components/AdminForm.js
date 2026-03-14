@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 
 const MEDIA_IMAGE = "image";
 const MEDIA_VIDEO = "video";
+const MEDIA_PDF = "pdf";
 
 export default function AdminForm() {
   const [title, setTitle] = useState("");
@@ -14,6 +15,7 @@ export default function AdminForm() {
   const [imageFiles, setImageFiles] = useState([]);
   const [videoEntries, setVideoEntries] = useState([]);
   const [videoUrlInput, setVideoUrlInput] = useState("");
+  const [pdfFiles, setPdfFiles] = useState([]);
   const [isFeatured, setIsFeatured] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -47,6 +49,16 @@ export default function AdminForm() {
 
   const removeVideo = (index) => {
     setVideoEntries((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const addPdfFiles = (e) => {
+    const files = Array.from(e.target.files || []).filter((f) => f.type === "application/pdf");
+    setPdfFiles((prev) => [...prev, ...files]);
+    e.target.value = "";
+  };
+
+  const removePdf = (index) => {
+    setPdfFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -110,6 +122,18 @@ export default function AdminForm() {
         }
       }
 
+      for (const file of pdfFiles) {
+        const fileName = `pdf-${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("news-images")
+          .upload(fileName, file, { contentType: "application/pdf" });
+
+        if (uploadError) throw new Error(uploadError.message);
+
+        const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+        media.push({ type: MEDIA_PDF, url: data.publicUrl });
+      }
+
       if (isFeatured) {
         await supabase
           .from("news")
@@ -147,6 +171,7 @@ export default function AdminForm() {
       setImageFiles([]);
       setVideoEntries([]);
       setVideoUrlInput("");
+      setPdfFiles([]);
       setIsFeatured(false);
     } catch (err) {
       setErrorMessage(err.message || "Error inesperado");
@@ -262,6 +287,26 @@ export default function AdminForm() {
                 <li key={i} style={styles.mediaItem}>
                   {entry.type === "file" ? entry.file.name : entry.url}
                   <button type="button" onClick={() => removeVideo(i)} style={styles.removeBtn}>
+                    Quitar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div style={styles.label}>
+          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>PDFs (opcional)</span>
+          <p style={{ fontSize: 13, color: "#666", marginBottom: 8 }}>
+            Subí uno o más archivos PDF para que se puedan ver en la noticia.
+          </p>
+          <input type="file" accept="application/pdf" multiple onChange={addPdfFiles} />
+          {pdfFiles.length > 0 && (
+            <ul style={styles.mediaList}>
+              {pdfFiles.map((file, i) => (
+                <li key={i} style={styles.mediaItem}>
+                  {file.name}
+                  <button type="button" onClick={() => removePdf(i)} style={styles.removeBtn}>
                     Quitar
                   </button>
                 </li>

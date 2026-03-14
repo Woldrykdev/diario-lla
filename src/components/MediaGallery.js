@@ -89,6 +89,26 @@ export default function MediaGallery({ media, imageUrlFallback, title }) {
           );
         }
 
+        if (item.type === "pdf") {
+          return (
+            <div key={i} className="noticia-pdf-wrapper">
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="noticia-pdf-link"
+              >
+                Abrir PDF en nueva pestaña
+              </a>
+              <iframe
+                src={`${item.url}#view=FitH`}
+                title={`PDF ${i + 1}`}
+                className="noticia-pdf-iframe"
+              />
+            </div>
+          );
+        }
+
         return (
           <div key={i} className="noticia-image-wrapper">
             <Image
