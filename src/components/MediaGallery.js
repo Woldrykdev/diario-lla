@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import { isDirectVideoUrl } from "@/lib/media";
 
 const DocumentViewer = dynamic(() => import("@/components/DocumentViewer"), { ssr: false });
 
@@ -27,12 +28,6 @@ function getVimeoEmbedUrl(url) {
     }
   } catch (_) {}
   return null;
-}
-
-function isDirectVideoUrl(url) {
-  if (!url || typeof url !== "string") return false;
-  const lower = url.toLowerCase();
-  return lower.endsWith(".mp4") || lower.endsWith(".webm") || lower.endsWith(".ogg");
 }
 
 export default function MediaGallery({ media, imageUrlFallback, title }) {

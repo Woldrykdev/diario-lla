@@ -23,8 +23,9 @@ export default async function NoticiaPage({ searchParams }) {
     redirect("/");
   }
 
-  const formattedDate = article.created_at
-    ? new Date(article.created_at).toLocaleDateString("es-AR", {
+  const pubDate = article.published_at || article.created_at;
+  const formattedDate = pubDate
+    ? new Date(pubDate).toLocaleDateString("es-AR", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",

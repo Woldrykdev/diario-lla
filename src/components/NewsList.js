@@ -3,20 +3,31 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import NewsCard from "@/components/NewsCard";
-import { getFirstImageUrl } from "@/lib/media";
+import NewsCoverMedia from "@/components/NewsCoverMedia";
+import { getCoverPreview, getPublicationDateValue } from "@/lib/media";
+
+function sortNewsByPublicationDate(list) {
+  if (!Array.isArray(list)) return [];
+  return [...list].sort((a, b) => {
+    const tb = new Date(getPublicationDateValue(b) || 0).getTime();
+    const ta = new Date(getPublicationDateValue(a) || 0).getTime();
+    return tb - ta;
+  });
+}
 
 export default function NewsList({ news }) {
   const searchParams = useSearchParams();
   const categoria = searchParams.get("categoria");
 
-  const byCategory =
+  const filtered =
     categoria && Array.isArray(news)
       ? news.filter((item) => item.category === categoria)
-      : news;
+      : news || [];
 
-  const featured = byCategory?.find((item) => item.is_featured);
+  const byCategory = sortNewsByPublicationDate(filtered);
+
+  const featured = byCategory.find((item) => item.is_featured);
   const others = featured
     ? byCategory.filter((item) => item.id !== featured.id)
     : byCategory;
@@ -38,9 +49,10 @@ export default function NewsList({ news }) {
       ? "Geraldine Calvella"
       : "Todas";
 
+  const featuredPub = featured ? getPublicationDateValue(featured) : null;
   const formattedFeaturedDate =
-    featured?.created_at &&
-    new Date(featured.created_at).toLocaleDateString("es-AR", {
+    featuredPub &&
+    new Date(featuredPub).toLocaleDateString("es-AR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -110,14 +122,15 @@ export default function NewsList({ news }) {
 
       {featured && (
         <section style={styles.featuredSection}>
-          {getFirstImageUrl(featured) && (
+          {getCoverPreview(featured) && (
             <div style={{ borderRadius: "14px", overflow: "hidden" }}>
-              <Image
-                src={getFirstImageUrl(featured)}
-                alt={featured.title || "Imagen de la noticia"}
+              <NewsCoverMedia
+                news={featured}
+                featured
                 width={900}
                 height={500}
-                style={{ width: "100%", height: "auto", objectFit: "cover" }}
+                classNameImage="news-card-image news-featured-cover"
+                imageStyle={{ width: "100%", height: "auto", objectFit: "cover" }}
               />
             </div>
           )}

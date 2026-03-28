@@ -1,10 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
-import { getFirstImageUrl } from "@/lib/media";
+import NewsCoverMedia from "@/components/NewsCoverMedia";
+import { getPublicationDateValue } from "@/lib/media";
 
 export default function NewsCard({ news }) {
-  const formattedDate = news?.created_at
-    ? new Date(news.created_at).toLocaleDateString("es-AR", {
+  const pub = getPublicationDateValue(news);
+  const formattedDate = pub
+    ? new Date(pub).toLocaleDateString("es-AR", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
@@ -12,19 +13,10 @@ export default function NewsCard({ news }) {
     : null;
 
   const hasSlug = !!(news?.slug && news.slug.trim());
-  const coverImageUrl = getFirstImageUrl(news);
 
   return (
     <div className="news-card">
-      {coverImageUrl && (
-        <Image
-          src={coverImageUrl}
-          alt={news.title || "Imagen de la noticia"}
-          width={600}
-          height={350}
-          className="news-card-image"
-        />
-      )}
+      <NewsCoverMedia news={news} />
 
       <div className="news-card-content">
         {formattedDate && <p className="news-card-date">{formattedDate}</p>}

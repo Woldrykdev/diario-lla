@@ -167,6 +167,7 @@ export default function AdminForm() {
         image_url: imageUrl,
         is_featured: isFeatured,
         published: true,
+        published_at: new Date().toISOString(),
         user_id: user.id,
       };
 
