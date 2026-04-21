@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-export default function ContactForm() {
+export default function ContactForm({ categoriaActiva }) {
+  const isJoinCategory = categoriaActiva === "sumate";
   const [form, setForm] = useState({
     nombre: "",
     email: "",
@@ -18,13 +19,17 @@ export default function ContactForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("loading");
+    const payload = {
+      ...form,
+      mensaje: isJoinCategory ? `[SUMATE] ${form.mensaje}` : form.mensaje,
+    };
 
     const res = await fetch("/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
 
     if (res.ok) {
@@ -40,10 +45,14 @@ export default function ContactForm() {
       <section className="contactSection">
         <div className="contactCard">
 
-          <h2 className="contactTitle">Envianos un mensaje</h2>
+          <h2 className="contactTitle">
+            {isJoinCategory ? "Sumate al equipo de La Libertad Avanza Saladillo" : "Envianos un mensaje"}
+          </h2>
 
           <p className="contactText">
-            Contacto para afiliaciones, propuestas o consultas.
+            {isJoinCategory
+              ? "Dejanos tus datos y contanos cómo te gustaría participar. Nos vamos a contactar con vos."
+              : "Contacto para afiliaciones, propuestas o consultas."}
           </p>
 
           <form className="contactForm" onSubmit={handleSubmit}>
@@ -67,7 +76,11 @@ export default function ContactForm() {
 
             <textarea
               name="mensaje"
-              placeholder="Escribí tu mensaje aquí..."
+              placeholder={
+                isJoinCategory
+                  ? "Contanos por qué te interesa sumarte y en qué área querés colaborar..."
+                  : "Escribí tu mensaje aquí..."
+              }
               rows="5"
               value={form.mensaje}
               onChange={handleChange}
@@ -75,12 +88,12 @@ export default function ContactForm() {
             ></textarea>
 
             <button type="submit">
-              {status === "loading" ? "Enviando..." : "Enviar mensaje"}
+              {status === "loading" ? "Enviando..." : isJoinCategory ? "Enviar interés" : "Enviar mensaje"}
             </button>
 
             {status === "success" && (
               <p className="success">
-                Mensaje enviado correctamente.
+                {isJoinCategory ? "¡Gracias! Recibimos tu interés para sumarte." : "Mensaje enviado correctamente."}
               </p>
             )}
 

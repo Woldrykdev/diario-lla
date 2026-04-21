@@ -225,7 +225,8 @@ export default function AdminForm() {
             style={styles.input}
           >
             <option value="">Seleccionar categoría</option>
-            <option value="general">Información general</option>
+            <option value="general">Últimas noticias</option>
+            <option value="informacion_general">General</option>
             <option value="proyectos">Proyectos</option>
             <option value="visitas">Visitas institucionales</option>
             <option value="juventud">Juventud</option>

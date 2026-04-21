@@ -7,13 +7,15 @@ import { useState, useRef, useEffect } from "react";
 
 const categories = [
   { value: "", label: "Todas las noticias" },
-  { value: "general", label: "Información general" },
+  { value: "general", label: "Últimas noticias" },
+  { value: "informacion_general", label: "General" },
   { value: "proyectos", label: "Proyectos del Concejo Deliberante" },
-  { value: "visitas ", label: "Visitas institucionales" },
+  { value: "visitas", label: "Visitas institucionales" },
   { value: "juventud", label: "Juventud" },
   { value: "formacion", label: "EFDAP" },
   { value: "purpura", label: "La Purpura" },
   { value: "geraldine", label: "Geraldine Calvella" },
+  { value: "sumate", label: "Sumate al equipo" },
 ];
 
 export default function Navbar() {

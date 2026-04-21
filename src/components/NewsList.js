@@ -19,13 +19,14 @@ function sortNewsByPublicationDate(list) {
 export default function NewsList({ news }) {
   const searchParams = useSearchParams();
   const categoria = searchParams.get("categoria");
+  const isJoinCategory = categoria === "sumate";
 
   const filtered =
     categoria && Array.isArray(news)
       ? news.filter((item) => item.category === categoria)
       : news || [];
 
-  const byCategory = sortNewsByPublicationDate(filtered);
+  const byCategory = isJoinCategory ? [] : sortNewsByPublicationDate(filtered);
 
   const featured = byCategory.find((item) => item.is_featured);
   const others = featured
@@ -34,7 +35,9 @@ export default function NewsList({ news }) {
 
   const categoriaLabel =
     categoria === "general"
-      ? "Información General"
+      ? "Últimas noticias"
+      : categoria === "informacion_general"
+      ? "General"
       : categoria === "proyectos"
       ? "Proyectos del Concejo Deliberante"
       : categoria === "visitas"
@@ -47,6 +50,8 @@ export default function NewsList({ news }) {
       ? "La Púrpura"
       : categoria === "geraldine"
       ? "Geraldine Calvella"
+      : categoria === "sumate"
+      ? "Sumate al equipo"
       : "Todas";
 
   const featuredPub = featured ? getPublicationDateValue(featured) : null;
@@ -81,7 +86,7 @@ export default function NewsList({ news }) {
 
   return (
     <>
-      <h1 style={styles.heading}>Últimas Noticias</h1>
+      <h1 style={styles.heading}>{isJoinCategory ? "Sumate al equipo" : "Últimas Noticias"}</h1>
 
       <p style={styles.filterText}>
         Mostrando: <strong>{categoriaLabel}</strong>
@@ -113,10 +118,15 @@ export default function NewsList({ news }) {
         </div>
       )}
 
-      {categoria === "juventud" && (
+
+      {isJoinCategory && (
         <div style={styles.categoriaTexto}>
-          <p style={styles.categoriaTextoP}>Coordinador: Juan Manuel Gimenez Giribone</p>
-          <p style={styles.categoriaTextoP}>SubCoordinador: Santino Valverde</p>
+          <p style={styles.categoriaTextoP}>
+            <strong>Sumate al equipo de La Libertad Avanza Saladillo.</strong>
+          </p>
+          <p style={styles.categoriaTextoP}>
+            Completá el formulario de abajo con tus datos y contanos en qué te gustaría colaborar.
+          </p>
         </div>
       )}
 
@@ -148,11 +158,13 @@ export default function NewsList({ news }) {
         </section>
       )}
 
-      <div style={styles.newsGrid}>
-        {others?.map((item) => (
-          <NewsCard key={item.id} news={item} />
-        ))}
-      </div>
+      {!isJoinCategory && (
+        <div style={styles.newsGrid}>
+          {others?.map((item) => (
+            <NewsCard key={item.id} news={item} />
+          ))}
+        </div>
+      )}
     </>
   );
 }

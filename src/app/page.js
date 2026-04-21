@@ -32,8 +32,7 @@ export default async function Home({ searchParams }) {
         )}
 
         <NewsList news={news || []} categoriaActiva={categoria} />
-
-            <ContactForm />
+        <ContactForm categoriaActiva={categoria} />
 
         <section className="mapSection">
           <h2 className="mapTitle">Dónde encontrarnos</h2>
