@@ -17,7 +17,8 @@ function getDocumentType(file) {
   const name = (file.name || "").toLowerCase();
   const type = (file.type || "").toLowerCase();
   if (type.includes("pdf") || name.endsWith(".pdf")) return MEDIA_PDF;
-  if (type.includes("wordprocessingml") || name.endsWith(".docx")) return MEDIA_DOCX;
+  if (type.includes("wordprocessingml") || name.endsWith(".docx"))
+    return MEDIA_DOCX;
   if (type.includes("msword") || name.endsWith(".doc")) return MEDIA_DOC;
   if (type.includes("text/plain") || name.endsWith(".txt")) return MEDIA_TEXT;
   return MEDIA_DOCUMENT;
@@ -33,6 +34,7 @@ export default function AdminForm() {
   const [videoUrlInput, setVideoUrlInput] = useState("");
   const [documentFiles, setDocumentFiles] = useState([]);
   const [isFeatured, setIsFeatured] = useState(false);
+  const [publishedAt, setPublishedAt] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -92,7 +94,11 @@ export default function AdminForm() {
         throw new Error("No estás logueado. Iniciá sesión para publicar.");
       }
 
-      const baseForSlug = (slugInput || title || `noticia-${Date.now()}`).toString();
+      const baseForSlug = (
+        slugInput ||
+        title ||
+        `noticia-${Date.now()}`
+      ).toString();
       const slug = baseForSlug
         .toLowerCase()
         .trim()
@@ -114,7 +120,9 @@ export default function AdminForm() {
 
         if (uploadError) throw new Error(uploadError.message);
 
-        const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+        const { data } = supabase.storage
+          .from("news-images")
+          .getPublicUrl(fileName);
         const url = data.publicUrl;
         media.push({ type: MEDIA_IMAGE, url });
         if (!imageUrl) imageUrl = url;
@@ -133,21 +141,29 @@ export default function AdminForm() {
 
           if (uploadError) throw new Error(uploadError.message);
 
-          const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+          const { data } = supabase.storage
+            .from("news-images")
+            .getPublicUrl(fileName);
           media.push({ type: MEDIA_VIDEO, url: data.publicUrl });
         }
       }
 
       for (const file of documentFiles) {
-        const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+        const ext = (file.name.split(".").pop() || "bin")
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "");
         const fileName = `doc-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
         const { error: uploadError } = await supabase.storage
           .from("news-images")
-          .upload(fileName, file, { contentType: file.type || "application/octet-stream" });
+          .upload(fileName, file, {
+            contentType: file.type || "application/octet-stream",
+          });
 
         if (uploadError) throw new Error(uploadError.message);
 
-        const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+        const { data } = supabase.storage
+          .from("news-images")
+          .getPublicUrl(fileName);
         media.push({ type: getDocumentType(file), url: data.publicUrl });
       }
 
@@ -163,11 +179,13 @@ export default function AdminForm() {
         title,
         content,
         slug,
-        category: (category && category.trim()) ? category.trim() : "general",
+        category: category && category.trim() ? category.trim() : "general",
         image_url: imageUrl,
         is_featured: isFeatured,
         published: true,
-        published_at: new Date().toISOString(),
+        published_at: publishedAt
+          ? new Date(publishedAt + "T00:00:00").toISOString()
+          : new Date().toISOString(),
         user_id: user.id,
       };
 
@@ -175,7 +193,9 @@ export default function AdminForm() {
         payload.media = media;
       }
 
-      const { error: insertError } = await supabase.from("news").insert([payload]);
+      const { error: insertError } = await supabase
+        .from("news")
+        .insert([payload]);
 
       if (insertError) {
         throw new Error(insertError.message);
@@ -256,8 +276,19 @@ export default function AdminForm() {
           />
         </label>
 
+        <label style={styles.label}>
+          Fecha de publicación
+          <input
+            type="date"
+            value={publishedAt}
+            onChange={(e) => setPublishedAt(e.target.value)}
+            style={styles.input}
+          />
+        </label>
         <div style={styles.label}>
-          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>Fotos (podés subir varias)</span>
+          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>
+            Fotos (podés subir varias)
+          </span>
           <input
             type="file"
             accept="image/*"
@@ -269,7 +300,11 @@ export default function AdminForm() {
               {imageFiles.map((file, i) => (
                 <li key={i} style={styles.mediaItem}>
                   {file.name}
-                  <button type="button" onClick={() => removeImage(i)} style={styles.removeBtn}>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(i)}
+                    style={styles.removeBtn}
+                  >
                     Quitar
                   </button>
                 </li>
@@ -279,16 +314,23 @@ export default function AdminForm() {
         </div>
 
         <div style={styles.label}>
-          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>Videos (opcional)</span>
+          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>
+            Videos (opcional)
+          </span>
           <p style={{ fontSize: 13, color: "#666", marginBottom: 8 }}>
-            Subí un archivo de video o pegá una URL (YouTube, Vimeo o enlace directo .mp4).
+            Subí un archivo de video o pegá una URL (YouTube, Vimeo o enlace
+            directo .mp4).
           </p>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 8 }}>
-            <input
-              type="file"
-              accept="video/*"
-              onChange={addVideoFile}
-            />
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
+            <input type="file" accept="video/*" onChange={addVideoFile} />
             <input
               type="url"
               placeholder="https://youtube.com/... o URL del video"
@@ -296,7 +338,11 @@ export default function AdminForm() {
               onChange={(e) => setVideoUrlInput(e.target.value)}
               style={{ ...styles.input, flex: 1, minWidth: 200 }}
             />
-            <button type="button" onClick={addVideoUrl} style={styles.addUrlBtn}>
+            <button
+              type="button"
+              onClick={addVideoUrl}
+              style={styles.addUrlBtn}
+            >
               Añadir URL
             </button>
           </div>
@@ -305,7 +351,11 @@ export default function AdminForm() {
               {videoEntries.map((entry, i) => (
                 <li key={i} style={styles.mediaItem}>
                   {entry.type === "file" ? entry.file.name : entry.url}
-                  <button type="button" onClick={() => removeVideo(i)} style={styles.removeBtn}>
+                  <button
+                    type="button"
+                    onClick={() => removeVideo(i)}
+                    style={styles.removeBtn}
+                  >
                     Quitar
                   </button>
                 </li>
@@ -315,17 +365,29 @@ export default function AdminForm() {
         </div>
 
         <div style={styles.label}>
-          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>Documentos (opcional)</span>
+          <span style={{ marginBottom: 6, display: "block", fontWeight: 600 }}>
+            Documentos (opcional)
+          </span>
           <p style={{ fontSize: 13, color: "#666", marginBottom: 8 }}>
-            PDF, Word (.doc, .docx), texto (.txt), RTF, ODT. Se verán dentro de la noticia.
+            PDF, Word (.doc, .docx), texto (.txt), RTF, ODT. Se verán dentro de
+            la noticia.
           </p>
-          <input type="file" accept={DOCUMENT_ACCEPT} multiple onChange={addDocumentFiles} />
+          <input
+            type="file"
+            accept={DOCUMENT_ACCEPT}
+            multiple
+            onChange={addDocumentFiles}
+          />
           {documentFiles.length > 0 && (
             <ul style={styles.mediaList}>
               {documentFiles.map((file, i) => (
                 <li key={i} style={styles.mediaItem}>
                   {file.name}
-                  <button type="button" onClick={() => removeDocument(i)} style={styles.removeBtn}>
+                  <button
+                    type="button"
+                    onClick={() => removeDocument(i)}
+                    style={styles.removeBtn}
+                  >
                     Quitar
                   </button>
                 </li>
